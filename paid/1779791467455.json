@@ -1,8 +1,8 @@
 {
     "source": "Peternakan UD Mitra Ilahi",
     "desc": "Titip di Bapak, Gw kirim telur tanggung 30, besar 12",
-    "q_tt": 3,
-    "q_tb": 2,
+    "q_tt": 18,
+    "q_tb": 12,
     "q_tj": 0,
     "p_tt": 52000,
     "p_tb": 54000,
@@ -11,6 +11,5 @@
     "is_lunas": true,
     "id": 1779791467455,
     "date": "2026-05-22T10:31",
-    "ref": "PO-VQUPWI",
-    "needs_image": false
+    "ref": "PO-VQUPWI"
 }

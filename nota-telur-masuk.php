@@ -367,7 +367,7 @@ $initialPosJson = json_encode($initialPos);
                 source: 'Peternakan UD Mitra Ilahi',
                 desc: 'Diantarkan kak Indra',
                 q_tt: 3, q_tb: 1, q_tj: 1,
-                p_tt: 50000, p_tb: 55000, p_tj: 52000,
+                p_tt: 52000, p_tb: 54000, p_tj: 57000,
                 pay_date: '-',
                 is_lunas: false
             };
@@ -458,6 +458,15 @@ $initialPosJson = json_encode($initialPos);
             }, 500);
         }
 
+        function formatQty(q) {
+            const ikat = Math.floor(q / 6);
+            const sisa = q % 6;
+            if (ikat > 0 && sisa > 0) return q + ' tray (' + ikat + ' ikat ' + sisa + ' tray)';
+            if (ikat > 0) return q + ' tray (' + ikat + ' ikat)';
+            if (sisa > 0) return q + ' tray';
+            return q + ' tray';
+        }
+
         function renderPOs() {
             const uiReportContainer = document.getElementById('ui-report-container');
             if (uiReportContainer) {
@@ -515,9 +524,9 @@ $initialPosJson = json_encode($initialPos);
                         <table>
                             <thead><tr><th>PRODUK</th><th style="text-align:center">QTY</th><th style="text-align:center">HARGA</th><th style="text-align:right">TOTAL</th></tr></thead>
                             <tbody>
-                                <tr style="${styleTt}"><td>Tanggung</td><td style="text-align:center">${po.q_tt} tray</td><td style="text-align:center">${formatIDR(po.p_tt)}</td><td style="text-align:right">${formatIDR(po.q_tt*po.p_tt)}</td></tr>
-                                <tr style="${styleTb}"><td>Besar</td><td style="text-align:center">${po.q_tb} tray</td><td style="text-align:center">${formatIDR(po.p_tb)}</td><td style="text-align:right">${formatIDR(po.q_tb*po.p_tb)}</td></tr>
-                                <tr style="${styleTj}"><td>Jumbo</td><td style="text-align:center">${po.q_tj} tray</td><td style="text-align:center">${formatIDR(po.p_tj)}</td><td style="text-align:right">${formatIDR(po.q_tj*po.p_tj)}</td></tr>
+                                <tr style="${styleTt}"><td>Tanggung</td><td style="text-align:center">${formatQty(po.q_tt)}</td><td style="text-align:center">${formatIDR(po.p_tt)}</td><td style="text-align:right">${formatIDR(po.q_tt*po.p_tt)}</td></tr>
+                                <tr style="${styleTb}"><td>Besar</td><td style="text-align:center">${formatQty(po.q_tb)}</td><td style="text-align:center">${formatIDR(po.p_tb)}</td><td style="text-align:right">${formatIDR(po.q_tb*po.p_tb)}</td></tr>
+                                <tr style="${styleTj}"><td>Jumbo</td><td style="text-align:center">${formatQty(po.q_tj)}</td><td style="text-align:center">${formatIDR(po.p_tj)}</td><td style="text-align:right">${formatIDR(po.q_tj*po.p_tj)}</td></tr>
                             </tbody>
                         </table>
                         <div class="footer">

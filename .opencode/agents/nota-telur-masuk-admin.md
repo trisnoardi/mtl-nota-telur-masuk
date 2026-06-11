@@ -63,16 +63,23 @@ File JSON di `paid/` atau `unpaid/`:
 - `ref` — Auto-generated `PO-XXXXXX`
 - `source` — Nama supplier
 - `desc` — Keterangan
-- `q_tt` / `p_tt` — Qty (tray) & harga per tray untuk **Tanggung** (1 tray = 30 butir)
+- `q_tt` / `p_tt` — Qty (tray) & harga per tray untuk **Tanggung**
 - `q_tb` / `p_tb` — Qty (tray) & harga per tray untuk **Besar**
 - `q_tj` / `p_tj` — Qty (tray) & harga per tray untuk **Jumbo**
 - `pay_date` — Tanggal pembayaran (string)
 - `is_lunas` — Boolean status lunas
 
-**Rumus:**
+**🔴 KONVERSI SATUAN (WAJIB TAHU):**
+| Satuan | = | Butir |
+|--------|---|:-----:|
+| 1 tray | = | 30 butir |
+| 1 ikat | = | 6 tray (= 180 butir) |
+
+**Rumus Total:**
 ```
 Total = (q_tt * p_tt) + (q_tb * p_tb) + (q_tj * p_tj)
 ```
+⚠️ Semua qty di JSON dalam **tray**. Jika user bilang "ikat" → ×6 jadi tray.
 
 ## 🛠️ Skill yang Tersedia
 - **@session-manager** — Buat, edit, hapus PO (via edit file JSON langsung)

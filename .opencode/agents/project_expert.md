@@ -45,9 +45,13 @@ Setiap file JSON di `paid/` atau `unpaid/`:
 }
 ```
 
-**Satuan:** `q_tt`, `q_tb`, `q_tj` = jumlah **tray** (1 tray = 30 butir)
-**Harga:** `p_tt`, `p_tb`, `p_tj` = harga **per tray**
-**Rumus Total:** `(q_tt * p_tt) + (q_tb * p_tb) + (q_tj * p_tj)`
+**🔴 PENTING — Satuan & Konversi:**
+- **`q_tt`, `q_tb`, `q_tj`** = jumlah dalam **tray** (WAJIB tray, bukan ikat/bukan butir)
+- **1 tray = 30 butir**
+- **1 ikat = 6 tray** (ini hanya untuk display referensi, data tetap tray)
+- **`p_tt`, `p_tb`, `p_tj`** = harga **per tray**
+- **Rumus Total:** `(q_tt * p_tt) + (q_tb * p_tb) + (q_tj * p_tj)`
+- **Konversi data lama:** Data lama dalam ikat → ×6 menjadi tray (karena 1 ikat = 6 tray)
 
 ## API Endpoint
 Semua via `nota-telur-masuk.php`:

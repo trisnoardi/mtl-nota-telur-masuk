@@ -41,7 +41,10 @@ Atau buka `http://localhost:8080/nota-telur-masuk.php` di browser.
     "is_lunas": false
 }
 ```
-> **⚠️ Satuan:** `q_tt/q_tb/q_tj` = **tray** (1 tray = 30 butir). `p_tt/p_tb/p_tj` = harga **per tray**. Rumus total = `q * p` (tidak ada *6).
+> **⚠️ SATUAN (WAJIB):** `q_tt/q_tb/q_tj` = **tray**. `p_tt/p_tb/p_tj` = **harga per tray**.
+> - **1 tray = 30 butir** | **1 ikat = 6 tray** (= 180 butir)
+> - **Rumus total = `q * p`** (tidak pakai *6)
+> - **Konversi data lama** (ikat→tray): ×6. Contoh: 3 ikat → 18 tray
 
 4. **Simpan** ke folder `paid/` (jika lunas) atau `unpaid/` (jika belum)
 5. **Verifikasi** di browser
@@ -71,7 +74,9 @@ Remove-Item -Path "G:\www\Ongoing\mitra-telur-premium\app-nota-telur-masuk\{fold
 ⚠️ WAJIB konfirmasi ke user sebelum hapus.
 
 ## ✅ Format Data PO
-> **Satuan:** `q_tt/q_tb/q_tj` = **tray** (1 tray = 30 butir). Harga `p_tt/p_tb/p_tj` = **per tray**.
+> **🔴 SATUAN:** `q_tt/q_tb/q_tj` = **tray**.
+> **1 tray = 30 butir** | **1 ikat = 6 tray** (= 180 butir).
+> Harga `p_tt/p_tb/p_tj` = **per tray**. Rumus = `q * p`.
 
 ```json
 {
