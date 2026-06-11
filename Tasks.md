@@ -22,14 +22,14 @@
 - ✅ Aturan: WAJIB buka otomatis di Chrome setiap kali CREATE/UPDATE/DELETE
 
 ### [✅ SELESAI] Task 3: Create PO Jumat 5 Juni 2026
-- ✅ Data: Tanggung 14 ikat, Besar 10 ikat, Jumbo 5 ikat
+- ✅ Data: Jumbo 5 tray (25 ikat), Tanggung 14 tray (70 ikat), Besar 10 tray (50 ikat)
 - ✅ Source: Peternakan UD Mitra Ilahi (ikuti data terakhir)
 - ✅ Harga: Tanggung Rp52.000, Besar Rp54.000, Jumbo Rp57.000/butir
 - ✅ Status: Belum Lunas (unpaid)
 - ✅ REF: PO-YSRHDD
-- ✅ File: `unpaid/1781193312456.json` + `.jpg`
-- ✅ Verifikasi browser sudah dibuka
-- ✅ Commit: `a6f0f91`
+- ✅ File: `unpaid/1781193312456.json`
+- ✅ Commit: `a6f0f91` → fix conversion `04707b7`
+- ✅ Verifikasi browser dibuka
 
 ---
 

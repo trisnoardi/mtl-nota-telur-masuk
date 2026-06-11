@@ -1,9 +1,9 @@
 {
     "source": "Peternakan UD Mitra Ilahi",
-    "desc": "Jumat, 5 Juni 2026 — Jumbo 5 tray, Tanggung 14 tray, Besar 10 tray",
-    "q_tt": 70,
-    "q_tb": 50,
-    "q_tj": 25,
+    "desc": "Jumat, 5 Juni 2026 \u2014 Jumbo 5 tray, Tanggung 14 tray, Besar 10 tray",
+    "q_tt": 14,
+    "q_tb": 10,
+    "q_tj": 5,
     "p_tt": 52000,
     "p_tb": 54000,
     "p_tj": 57000,
@@ -11,6 +11,5 @@
     "is_lunas": false,
     "id": 1781193312456,
     "date": "2026-06-05T23:30",
-    "ref": "PO-YSRHDD",
-    "needs_image": false
+    "ref": "PO-YSRHDD"
 }
