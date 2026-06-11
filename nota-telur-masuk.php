@@ -624,8 +624,8 @@ $initialPosJson = json_encode($initialPos);
         }
 
         function generateReportHTML(reportId = 'temp-report', forUI = false) {
-            let paidList = pos.filter(p => p.is_lunas).sort((a,b) => b.id - a.id).slice(0, 3).reverse(); 
-            let unpaidList = pos.filter(p => !p.is_lunas).sort((a,b) => a.id - b.id); 
+            let paidList = pos.filter(p => p.is_lunas).sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3).reverse(); 
+            let unpaidList = pos.filter(p => !p.is_lunas).sort((a,b) => new Date(a.date) - new Date(b.date));
             
             let totalUnpaidValue = unpaidList.reduce((sum, p) => sum + (p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj), 0);
             
