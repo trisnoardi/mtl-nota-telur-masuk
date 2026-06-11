@@ -63,15 +63,15 @@ File JSON di `paid/` atau `unpaid/`:
 - `ref` — Auto-generated `PO-XXXXXX`
 - `source` — Nama supplier
 - `desc` — Keterangan
-- `q_tt` / `p_tt` — Qty & harga per butir untuk **Tanggung** (dalam ikat, 1 ikat = 6 butir)
-- `q_tb` / `p_tb` — Qty & harga per butir untuk **Besar**
-- `q_tj` / `p_tj` — Qty & harga per butir untuk **Jumbo**
+- `q_tt` / `p_tt` — Qty (tray) & harga per tray untuk **Tanggung** (1 tray = 30 butir)
+- `q_tb` / `p_tb` — Qty (tray) & harga per tray untuk **Besar**
+- `q_tj` / `p_tj` — Qty (tray) & harga per tray untuk **Jumbo**
 - `pay_date` — Tanggal pembayaran (string)
 - `is_lunas` — Boolean status lunas
 
 **Rumus:**
 ```
-Total = (q_tt * 6 * p_tt) + (q_tb * 6 * p_tb) + (q_tj * 6 * p_tj)
+Total = (q_tt * p_tt) + (q_tb * p_tb) + (q_tj * p_tj)
 ```
 
 ## 🛠️ Skill yang Tersedia
@@ -87,7 +87,7 @@ Total = (q_tt * 6 * p_tt) + (q_tb * 6 * p_tb) + (q_tj * 6 * p_tj)
 3. **BUAT object JSON** sesuai format
 4. **SIMPAN** file JSON ke folder yang sesuai (`paid/` jika `is_lunas=true`, `unpaid/` jika `is_lunas=false`)
 5. **VERIFIKASI** di browser
-6. **COMMIT**
+6. **COMMIT & PUSH**
 
 ### B. Edit PO Existing
 1. **CARI file** di `paid/` atau `unpaid/` berdasarkan ID atau ref
@@ -95,14 +95,14 @@ Total = (q_tt * 6 * p_tt) + (q_tb * 6 * p_tb) + (q_tj * 6 * p_tj)
 3. **PINDAHKAN** file antar folder jika status lunas berubah
 4. **HAPUS** file dari folder lama, simpan ke folder baru
 5. **VERIFIKASI** di browser
-6. **COMMIT**
+6. **COMMIT & PUSH**
 
 ### C. Lunasi PO (Set to Paid)
 1. **CARI file** di `unpaid/`
 2. **SET** `is_lunas = true` dan `pay_date = hari ini`
 3. **PINDAHKAN** file JSON + JPG dari `unpaid/` ke `paid/`
 4. **VERIFIKASI** di browser
-5. **COMMIT`
+5. **COMMIT & PUSH`
 
 ### D. Saat User Kirim Gambar
 > ✅ **KAMU PAKAI Mimo v2.5 yang SUPPORT image input**
@@ -126,9 +126,9 @@ Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" 
 2. ✅ **Jangan edit `nota-telur-masuk.php`** tanpa instruksi eksplisit
 3. ✅ **Format JSON WAJIB konsisten**
 4. ✅ **Jangan HAPUS field** — biarkan null/"" jika tidak ada data
-5. ✅ **WAJIB commit** setiap selesai perubahan:
+5. ✅ **WAJIB commit + push** setiap selesai perubahan:
    ```
-   git add -A && git commit -m "{type}: {description}"
+   git add -A && git commit -m "{type}: {description}" && git push
    ```
 
 ## 🔗 Load Skill Saat Dibutuhkan

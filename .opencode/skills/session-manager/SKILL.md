@@ -41,6 +41,8 @@ Atau buka `http://localhost:8080/nota-telur-masuk.php` di browser.
     "is_lunas": false
 }
 ```
+> **⚠️ Satuan:** `q_tt/q_tb/q_tj` = **tray** (1 tray = 30 butir). `p_tt/p_tb/p_tj` = harga **per tray**. Rumus total = `q * p` (tidak ada *6).
+
 4. **Simpan** ke folder `paid/` (jika lunas) atau `unpaid/` (jika belum)
 5. **Verifikasi** di browser
 
@@ -69,6 +71,8 @@ Remove-Item -Path "G:\www\Ongoing\mitra-telur-premium\app-nota-telur-masuk\{fold
 ⚠️ WAJIB konfirmasi ke user sebelum hapus.
 
 ## ✅ Format Data PO
+> **Satuan:** `q_tt/q_tb/q_tj` = **tray** (1 tray = 30 butir). Harga `p_tt/p_tb/p_tj` = **per tray**.
+
 ```json
 {
     "id": 1778112625983,
@@ -90,4 +94,4 @@ Remove-Item -Path "G:\www\Ongoing\mitra-telur-premium\app-nota-telur-masuk\{fold
 3. ✅ **Jika pindah status lunas**, pindahkan file antar folder
 4. ✅ **Jangan hapus field** — biarkan null/"" jika tidak ada data
 5. ✅ **WAJIB verifikasi di browser** setelah buat/edit
-6. ✅ **WAJIB commit** setelah perubahan
+6. ✅ **WAJIB commit + push** setelah perubahan

@@ -45,6 +45,10 @@ Setiap file JSON di `paid/` atau `unpaid/`:
 }
 ```
 
+**Satuan:** `q_tt`, `q_tb`, `q_tj` = jumlah **tray** (1 tray = 30 butir)
+**Harga:** `p_tt`, `p_tb`, `p_tj` = harga **per tray**
+**Rumus Total:** `(q_tt * p_tt) + (q_tb * p_tb) + (q_tj * p_tj)`
+
 ## API Endpoint
 Semua via `nota-telur-masuk.php`:
 | Endpoint | Method | Deskripsi |

@@ -12,6 +12,7 @@
 4. **Jangan hapus field** dari JSON — biarkan null/"" jika tidak ada data.
 5. **WAJIB verifikasi di browser** setiap selesai create/update/delete PO.
 6. **WAJIB commit** setiap selesai perubahan.
+7. **WAJIB `git push`** setelah setiap commit — jangan pernah lupa push.
 
 ## 2. Aturan Git
 
@@ -20,6 +21,7 @@
 - Format commit: `feat:`, `fix:`, `docs:`, `chore:`, `init:`, `refactor:`
 - Contoh: `feat: add PO from UD Mitra Ilahi 11 Juni`
 - Contoh: `fix: update payment status PO-A1B2C3 to lunas`
+- **Setiap commit WAJIB diikuti `git push origin main`**
 
 ## 3. Aturan Data
 

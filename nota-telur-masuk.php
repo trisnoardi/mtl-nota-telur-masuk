@@ -470,7 +470,7 @@ $initialPosJson = json_encode($initialPos);
             pos.sort((a, b) => b.id - a.id);
 
             pos.forEach((po, idx) => {
-                const total = (po.q_tt*6*po.p_tt) + (po.q_tb*6*po.p_tb) + (po.q_tj*6*po.p_tj);
+                const total = (po.q_tt*po.p_tt) + (po.q_tb*po.p_tb) + (po.q_tj*po.p_tj);
                 
                 const container = document.createElement('div');
                 container.className = 'nota-container';
@@ -515,9 +515,9 @@ $initialPosJson = json_encode($initialPos);
                         <table>
                             <thead><tr><th>PRODUK</th><th style="text-align:center">QTY</th><th style="text-align:center">HARGA</th><th style="text-align:right">TOTAL</th></tr></thead>
                             <tbody>
-                                <tr style="${styleTt}"><td>Tanggung</td><td style="text-align:center">${po.q_tt*6} (${po.q_tt} ikat)</td><td style="text-align:center">${formatIDR(po.p_tt)}</td><td style="text-align:right">${formatIDR(po.q_tt*6*po.p_tt)}</td></tr>
-                                <tr style="${styleTb}"><td>Besar</td><td style="text-align:center">${po.q_tb*6} (${po.q_tb} ikat)</td><td style="text-align:center">${formatIDR(po.p_tb)}</td><td style="text-align:right">${formatIDR(po.q_tb*6*po.p_tb)}</td></tr>
-                                <tr style="${styleTj}"><td>Jumbo</td><td style="text-align:center">${po.q_tj*6} (${po.q_tj} ikat)</td><td style="text-align:center">${formatIDR(po.p_tj)}</td><td style="text-align:right">${formatIDR(po.q_tj*6*po.p_tj)}</td></tr>
+                                <tr style="${styleTt}"><td>Tanggung</td><td style="text-align:center">${po.q_tt} tray</td><td style="text-align:center">${formatIDR(po.p_tt)}</td><td style="text-align:right">${formatIDR(po.q_tt*po.p_tt)}</td></tr>
+                                <tr style="${styleTb}"><td>Besar</td><td style="text-align:center">${po.q_tb} tray</td><td style="text-align:center">${formatIDR(po.p_tb)}</td><td style="text-align:right">${formatIDR(po.q_tb*po.p_tb)}</td></tr>
+                                <tr style="${styleTj}"><td>Jumbo</td><td style="text-align:center">${po.q_tj} tray</td><td style="text-align:center">${formatIDR(po.p_tj)}</td><td style="text-align:right">${formatIDR(po.q_tj*po.p_tj)}</td></tr>
                             </tbody>
                         </table>
                         <div class="footer">
@@ -616,7 +616,7 @@ $initialPosJson = json_encode($initialPos);
             let paidList = pos.filter(p => p.is_lunas).sort((a,b) => b.id - a.id).slice(0, 3).reverse(); 
             let unpaidList = pos.filter(p => !p.is_lunas).sort((a,b) => a.id - b.id); 
             
-            let totalUnpaidValue = unpaidList.reduce((sum, p) => sum + (p.q_tt*6*p.p_tt + p.q_tb*6*p.p_tb + p.q_tj*6*p.p_tj), 0);
+            let totalUnpaidValue = unpaidList.reduce((sum, p) => sum + (p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj), 0);
             
             let containerStyle = forUI 
                 ? `background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); width: 100%; max-width: 600px; font-size: 14px; text-align: left; font-family: 'Inter', sans-serif; border: 1px solid var(--border);`
@@ -633,7 +633,7 @@ $initialPosJson = json_encode($initialPos);
             let combined = [...paidList, ...unpaidList];
             
             combined.forEach(p => {
-                let val = p.q_tt*6*p.p_tt + p.q_tb*6*p.p_tb + p.q_tj*6*p.p_tj;
+                let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
                 
                 let payDateStr = p.is_lunas && p.pay_date && p.pay_date !== '-' ? `<span style="font-size:10px; color:#64748b; margin-left:4px;">(${p.pay_date})</span>` : '';
                 

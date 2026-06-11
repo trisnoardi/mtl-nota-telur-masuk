@@ -21,6 +21,11 @@
 - ✅ Semua skill & agent menggunakan URL `http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php`
 - ✅ Aturan: WAJIB buka otomatis di Chrome setiap kali CREATE/UPDATE/DELETE
 
+### [✅ SELESAI] Task 3: Always Push
+- ✅ Semua aturan git di semua file: WAJIB commit + WAJIB push setelahnya
+- ✅ Setiap alur CRUD di admin agent: `COMMIT & PUSH`
+- ✅ Command template: `git add -A && git commit -m "..." && git push`
+
 ### [✅ SELESAI] Task 3: Create PO Jumat 5 Juni 2026
 - ✅ Data: Jumbo 5 tray (25 ikat), Tanggung 14 tray (70 ikat), Besar 10 tray (50 ikat)
 - ✅ Source: Peternakan UD Mitra Ilahi (ikuti data terakhir)

@@ -50,7 +50,7 @@
 1. **BACA** data PO dari user (source, desc, qty, harga, status lunas)
 2. **BUAT/EDIT** file JSON di `paid/` atau `unpaid/`
 3. **VERIFIKASI** di browser (`http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php`) — WAJIB buka otomatis setiap kali ada perubahan
-4. **COMMIT** ke git
+4. **COMMIT & PUSH** ke git (`git add -A && git commit -m "..." && git push`)
 
 ## 5. Alur CRUD
 
@@ -76,5 +76,5 @@
 
 - **Jangan edit `nota-telur-masuk.php`** tanpa instruksi eksplisit
 - **Semua data adalah file JSON** — edit langsung, jangan via API
-- **Selalu commit** setelah satu pekerjaan selesai
+- **Selalu commit + push** setelah satu pekerjaan selesai
 - Jika ragu tentang aturan, baca `AGENTS_RULES.md` atau konsultasi dengan `@project_expert`
