@@ -627,6 +627,7 @@ $initialPosJson = json_encode($initialPos);
             let paidList = pos.filter(p => p.is_lunas).sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3).reverse(); 
             let unpaidList = pos.filter(p => !p.is_lunas).sort((a,b) => new Date(a.date) - new Date(b.date));
             
+            let totalPaidValue = paidList.reduce((sum, p) => sum + (p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj), 0);
             let totalUnpaidValue = unpaidList.reduce((sum, p) => sum + (p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj), 0);
             
             let containerStyle = forUI 
@@ -639,23 +640,40 @@ $initialPosJson = json_encode($initialPos);
                 html += `<h3 style="margin-bottom: 15px; font-family: 'Outfit', sans-serif; color: var(--primary); text-align:center;">Laporan Tagihan</h3>`;
             }
 
+            // --- SECTION: DIBAYAR ---
+            if (paidList.length > 0) {
+                html += `<div style="font-weight: 800; margin-bottom: 8px; color: #166534; font-size: 14px;">✓ ${paidList.length} nota terakhir dibayar — Rp ${formatIDR(totalPaidValue)}</div>`;
+                paidList.forEach(p => {
+                    let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
+                    let payDateStr = p.pay_date && p.pay_date !== '-' ? `<span style="font-size:10px; color:#64748b; margin-left:4px;">(${p.pay_date})</span>` : '';
+                    let formattedDate = formatDate(p.date).split(' | ')[0]; 
+                    html += `<div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 4px;">
+                                <span><span style="color: #64748b; font-size: 11px; margin-right: 8px;">${formattedDate}</span><span style="font-weight: 600;">${p.ref}</span></span>
+                                <span><span style="font-weight: 600;">Rp ${formatIDR(val)}</span>
+                                    <span style="color: #166534; font-weight: 700; background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px;">DIBAYAR</span>${payDateStr}
+                                </span>
+                             </div>`;
+                });
+                html += `<div style="margin: 8px 0 12px 0; border-top: 1px dashed #ddd;"></div>`;
+            }
+
+            // --- SECTION: BELUM DIBAYAR (dengan running total) ---
             html += `<div style="font-weight: 800; margin-bottom: 12px; color: #e11d48; font-size: 15px;">- ${unpaidList.length} nota belum dibayar sejumlah Rp ${formatIDR(totalUnpaidValue)}</div>`;
             
-            let combined = [...paidList, ...unpaidList];
-            
-            combined.forEach(p => {
+            let runningTotal = 0;
+            unpaidList.forEach((p, i) => {
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
-                
-                let payDateStr = p.is_lunas && p.pay_date && p.pay_date !== '-' ? `<span style="font-size:10px; color:#64748b; margin-left:4px;">(${p.pay_date})</span>` : '';
-                
-                let statusText = p.is_lunas 
-                    ? `<span style="color: #166534; font-weight: 700; background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px;">DIBAYAR</span>${payDateStr}` 
-                    : `<span style="color: #92400e; font-weight: 700; background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px;">BELUM DIBAYAR</span>`;
+                runningTotal += val;
+                let notaCount = i + 1;
                 
                 let formattedDate = formatDate(p.date).split(' | ')[0]; 
-                html += `<div style="margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 4px;">
+                html += `<div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 4px;">
                             <span><span style="color: #64748b; font-size: 11px; margin-right: 8px;">${formattedDate}</span><span style="font-weight: 600;">${p.ref}</span></span>
-                            <span><span style="font-weight: 600;">Rp ${formatIDR(val)}</span> ${statusText}</span>
+                            <span>
+                                <span style="font-weight: 600;">Rp ${formatIDR(val)}</span>
+                                <span style="color: #92400e; font-weight: 700; background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px;">BELUM DIBAYAR</span>
+                                <span style="font-size: 10px; color: #64748b; margin-left: 4px;">(${formatIDR(runningTotal)}, bayar ${notaCount} nota)</span>
+                            </span>
                          </div>`;
             });
             

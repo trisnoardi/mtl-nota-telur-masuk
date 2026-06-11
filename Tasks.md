@@ -71,9 +71,11 @@
 ### [✅ SELESAI] Task 7: Kenaikan Harga per 9 Juni 2026
 
 ### [✅ SELESAI] Task 8: Urut PO by Tanggal + Format Hari pada Tanggal
-- ✅ Sorting PO: `pos.sort((a, b) => new Date(b.date) - new Date(a.date))` — urut berdasarkan tanggal transaksi
-- ✅ `formatDate()`: output jadi `"Senin, 6 Jun 2026 | 23:30"` (nama hari + bulan singkat 3 huruf)
+- ✅ `renderPOs()` — sort by date descending (newest first)
+- ✅ `generateReportHTML()` — paid: newest 3 reversed; unpaid: sort by date ascending
+- ✅ `formatDate()`: output jadi `"Senin, 6 Jun 2026 | 23:30"` (nama hari + bulan singkat)
 - ✅ `setTodayPay()` & `lunasiPO()`: pakai format hari + tanggal + bulan singkat
+- ✅ **Bugfix:** report sebelumnya sorting pake `id` (waktu buat), bukan `date`
 - ✅ Commit: `7166e7a`
 
 ### [✅ SELESAI] Task 9: PO Senin-Rabu + Kenaikan Harga
