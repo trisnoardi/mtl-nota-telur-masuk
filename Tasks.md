@@ -27,14 +27,21 @@
 - ✅ Command template: `git add -A && git commit -m "..." && git push`
 
 ### [✅ SELESAI] Task 3: Create PO Jumat 5 Juni 2026
-- ✅ Data: Jumbo 5 tray (25 ikat), Tanggung 14 tray (70 ikat), Besar 10 tray (50 ikat)
+- ✅ Data: Jumbo 5 tray, Tanggung 14 tray, Besar 10 tray
 - ✅ Source: Peternakan UD Mitra Ilahi (ikuti data terakhir)
-- ✅ Harga: Tanggung Rp52.000, Besar Rp54.000, Jumbo Rp57.000/butir
+- ✅ Harga: Tanggung Rp52.000, Besar Rp54.000, Jumbo Rp57.000/tray
 - ✅ Status: Belum Lunas (unpaid)
 - ✅ REF: PO-YSRHDD
 - ✅ File: `unpaid/1781193312456.json`
-- ✅ Commit: `a6f0f91` → fix conversion `04707b7`
-- ✅ Verifikasi browser dibuka
+- ✅ Commit: `bf45a26`
+
+### [✅ SELESAI] Task 4: Konversi Semua Data ke Tray & Perbaiki PHP
+- ✅ Semua data lama (ikat) dikonversi ke tray (×6, karena 1 ikat = 6 tray)
+- ✅ PHP formula `q*6*p` dihapus → jadi `q*p` (q dalam tray, p per tray)
+- ✅ Display: `X tray (Y ikat)` atau `X tray (Y ikat Z tray)`
+- ✅ Knowledge: 1 tray = 30 butir, 1 ikat = 6 tray
+- ✅ Dokumen: project_expert, admin agent, session-manager skill diupdate
+- ✅ Commit: `bf45a26`
 
 ---
 
