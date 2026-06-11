@@ -115,9 +115,10 @@ Total = (q_tt * 6 * p_tt) + (q_tb * 6 * p_tb) + (q_tj * 6 * p_tj)
 3. **BACA GAMBAR** untuk ekstrak data PO
 4. **PROSES** sesuai alur
 
-### E. Verifikasi di Browser
+### E. Verifikasi di Browser (WAJIB SETIAP KALI)
+Buka otomatis setelah setiap CREATE/UPDATE/DELETE — jangan tunggu diminta user.
 ```powershell
-Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList "http://localhost:8080/nota-telur-masuk.php"
+Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList "http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php"
 ```
 
 ### F. Praktik Umum

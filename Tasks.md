@@ -17,6 +17,10 @@
 - ✅ `ARCHITECTURE.md`, `AGENTS_RULES.md`, `AGENTS.md`
 - ✅ `Tasks.md` — file ini
 
+### [✅ SELESAI] Task 2: Update URL Browser ke localhost:8000
+- ✅ Semua skill & agent menggunakan URL `http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php`
+- ✅ Aturan: WAJIB buka otomatis di Chrome setiap kali CREATE/UPDATE/DELETE
+
 ---
 
 ## PRIORITAS TERTINGGI

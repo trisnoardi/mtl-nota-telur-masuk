@@ -16,15 +16,10 @@ Digunakan untuk verifikasi bahwa perubahan sudah benar secara visual.
 
 ### Buka App Utama
 ```powershell
-Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList "http://localhost:8080/nota-telur-masuk.php"
-```
-
-### Mulai Server (Jika Belum Berjalan)
-```powershell
-Start-Process -FilePath "powershell" -ArgumentList "-NoExit -Command php -S localhost:8080" -WindowStyle Hidden
+Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList "http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php"
 ```
 
 ## ⚠️ Aturan
-1. ✅ Panggil SETELAH setiap CREATE/UPDATE/DELETE data PO
+1. ✅ **WAJIB panggil SETIAP kali setelah CREATE/UPDATE/DELETE data PO** — buka otomatis tanpa perlu diminta user
 2. ✅ Biarkan Chrome tetap terbuka agar user bisa melihat hasilnya
-3. ✅ Gunakan URL `http://localhost:8080/nota-telur-masuk.php`
+3. ✅ Gunakan URL `http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php`

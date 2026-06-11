@@ -39,9 +39,9 @@ app-nota-telur-masuk/
 ## 3. Cara Kerja
 
 ### 3.1. Server
-- PHP built-in server via `php -S localhost:8080`
-- Jalankan: `run-server.bat` atau `php -S localhost:8080`
-- Akses: `http://localhost:8080/nota-telur-masuk.php`
+- Server lokal: `http://localhost:8000/` (XAMPP / PHP built-in server)
+- Akses: `http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php`
+- **WAJIB** buka URL ini otomatis di Chrome setiap kali ada perubahan data PO
 
 ### 3.2. Data Flow
 1. User input data PO via form modal di browser

@@ -15,8 +15,8 @@
 | **Deskripsi** | Single-file PHP app untuk mencatat Purchase Order telur masuk dari supplier |
 | **Path** | `G:\www\Ongoing\mitra-telur-premium\app-nota-telur-masuk` |
 | **Main Project** | `G:\www\Ongoing\mitra-telur-premium` (Mitra Telur Premium) |
-| **Server** | `php -S localhost:8080` |
-| **App URL** | `http://localhost:8080/nota-telur-masuk.php` |
+| **Server** | `http://localhost:8000/` (XAMPP / server lokal) |
+| **App URL** | `http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php` |
 
 ## 2. Agents & Skills
 
@@ -49,7 +49,7 @@
 
 1. **BACA** data PO dari user (source, desc, qty, harga, status lunas)
 2. **BUAT/EDIT** file JSON di `paid/` atau `unpaid/`
-3. **VERIFIKASI** di browser (`http://localhost:8080/nota-telur-masuk.php`)
+3. **VERIFIKASI** di browser (`http://localhost:8000/mitra-telur-premium/app-nota-telur-masuk/nota-telur-masuk.php`) — WAJIB buka otomatis setiap kali ada perubahan
 4. **COMMIT** ke git
 
 ## 5. Alur CRUD
