@@ -26,6 +26,12 @@
 - ✅ Setiap alur CRUD di admin agent: `COMMIT & PUSH`
 - ✅ Command template: `git add -A && git commit -m "..." && git push`
 
+### [✅ SELESAI] Task 4: Custom Global Agent @PurchaseAdmin
+- ✅ Agent `@PurchaseAdmin` dibuat di global opencode agents (`C:\Users\trisn\.config\opencode\agents\`)
+- ✅ Terdaftar di `opencode.json` dengan model `opencode-go/deepseek-v4-flash`
+- ✅ Bisa dipanggil dari project mana pun
+- ✅ Referensi ditambahkan di `AGENTS.md` project ini
+
 ### [✅ SELESAI] Task 3: Create PO Jumat 5 Juni 2026
 - ✅ Data: Jumbo 5 tray, Tanggung 14 tray, Besar 10 tray
 - ✅ Source: Peternakan UD Mitra Ilahi (ikuti data terakhir)
@@ -42,6 +48,16 @@
 - ✅ Knowledge: 1 tray = 30 butir, 1 ikat = 6 tray
 - ✅ Dokumen: project_expert, admin agent, session-manager skill diupdate
 - ✅ Commit: `bf45a26`
+
+### [✅ SELESAI] Task 5: Create PO Kamis 4 Juni 2026
+- ✅ Data: Jumbo 12 tray
+- ✅ Source: Peternakan UD Mitra Ilahi
+- ✅ Harga: Jumbo Rp57.000/tray
+- ✅ Status: Belum Lunas (unpaid)
+- ✅ REF: PO-HI1M5T
+- ✅ File: `unpaid/1781194809832.json`
+- ✅ Total: Rp684.000
+- ✅ Commit: `d580101`
 
 ---
 

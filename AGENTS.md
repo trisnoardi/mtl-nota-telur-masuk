@@ -25,7 +25,8 @@
 | Agent | File | Fungsi |
 |-------|------|--------|
 | **`@project_expert`** | `.opencode/agents/project_expert.md` | Informasi project, arsitektur, path, format data |
-| **`@nota-telur-masuk-admin`** | `.opencode/agents/nota-telur-masuk-admin.md` | Agent utama pengelola PO |
+| **`@nota-telur-masuk-admin`** | `.opencode/agents/nota-telur-masuk-admin.md` | Agent utama pengelola PO (spesifik project) |
+| **`@PurchaseAdmin`** | Global bawaan opencode | Agent global admin purchase — bisa dipakai di project mana pun |
 
 ### 2.2. Skill yang Tersedia
 

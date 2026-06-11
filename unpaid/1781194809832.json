@@ -1,6 +1,6 @@
 {
     "source": "Peternakan UD Mitra Ilahi",
-    "desc": "Kamis, 4 Juni 2026 — Jumbo 12 tray",
+    "desc": "Kamis, 4 Juni 2026 \u2014 Jumbo 12 tray",
     "q_tt": 0,
     "q_tb": 0,
     "q_tj": 12,
@@ -11,6 +11,5 @@
     "is_lunas": false,
     "id": 1781194809832,
     "date": "2026-06-04T23:30",
-    "ref": "PO-HI1M5T",
-    "needs_image": false
+    "ref": "PO-HI1M5T"
 }
