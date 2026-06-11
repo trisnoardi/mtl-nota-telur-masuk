@@ -59,6 +59,21 @@
 - ✅ Total: Rp684.000
 - ✅ Commit: `d580101`
 
+### [✅ SELESAI] Task 6: Create PO Minggu 7 Juni 2026
+- ✅ Data: Besar 12 tray, Tanggung 13 tray, Jumbo 5 tray
+- ✅ Source: Peternakan UD Mitra Ilahi
+- ✅ Harga lama: Tanggung Rp52k, Besar Rp54k, Jumbo Rp57k/tray
+- ✅ Status: Belum Lunas (unpaid)
+- ✅ REF: PO-OD78LZ
+- ✅ Total: Rp1.609.000
+- ✅ Commit: `eb120a4`
+
+### [✅ SELESAI] Task 7: Kenaikan Harga per 9 Juni 2026
+- ✅ **Harga baru mulai Selasa 9 Juni 2026:** Tanggung Rp54.000, Besar Rp56.000, Jumbo Rp58.000/tray
+- ✅ PO Selasa 9 Juni: Besar 15 tray, Tanggung 15 tray
+- ✅ REF: PO-2D561C
+- ✅ Total: Rp1.650.000
+
 ---
 
 ## PRIORITAS TERTINGGI

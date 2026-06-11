@@ -367,7 +367,7 @@ $initialPosJson = json_encode($initialPos);
                 source: 'Peternakan UD Mitra Ilahi',
                 desc: 'Diantarkan kak Indra',
                 q_tt: 3, q_tb: 1, q_tj: 1,
-                p_tt: 52000, p_tb: 54000, p_tj: 57000,
+                p_tt: 54000, p_tb: 56000, p_tj: 58000,
                 pay_date: '-',
                 is_lunas: false
             };
@@ -400,9 +400,10 @@ $initialPosJson = json_encode($initialPos);
         function formatDate(val) { 
             if(!val) return '-';
             const d = new Date(val);
-            const m = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const m = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
             const time = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-            return `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()} | ${time}`;
+            return `${days[d.getDay()]}, ${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()} | ${time}`;
         }
 
         async function generateCardCanvas(card) {
@@ -476,7 +477,7 @@ $initialPosJson = json_encode($initialPos);
             const wrapper = document.getElementById('po-list-wrapper');
             wrapper.innerHTML = '';
 
-            pos.sort((a, b) => b.id - a.id);
+            pos.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             pos.forEach((po, idx) => {
                 const total = (po.q_tt*po.p_tt) + (po.q_tb*po.p_tb) + (po.q_tj*po.p_tj);
@@ -616,8 +617,9 @@ $initialPosJson = json_encode($initialPos);
 
         function setTodayPay() { 
             const d = new Date();
-            const m = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            inputs.pay_date.value = `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const m = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            inputs.pay_date.value = `${days[d.getDay()]}, ${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
             updateData();
         }
 
@@ -691,8 +693,9 @@ $initialPosJson = json_encode($initialPos);
             const po = pos[idx];
             po.is_lunas = true;
             const d = new Date();
-            const m = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            po.pay_date = `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const m = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            po.pay_date = `${days[d.getDay()]}, ${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
             
             savePOToBackendDebounced(po);
             renderPOs();
