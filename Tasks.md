@@ -68,16 +68,17 @@
 - ✅ Total: Rp1.609.000
 - ✅ Commit: `eb120a4`
 
+### [✅ SELESAI] Task 7: Kenaikan Harga per 9 Juni 2026
+
 ### [✅ SELESAI] Task 8: Urut PO by Tanggal + Format Hari pada Tanggal
 - ✅ Sorting PO: `pos.sort((a, b) => new Date(b.date) - new Date(a.date))` — urut berdasarkan tanggal transaksi
 - ✅ `formatDate()`: output jadi `"Senin, 6 Jun 2026 | 23:30"` (nama hari + bulan singkat 3 huruf)
 - ✅ `setTodayPay()` & `lunasiPO()`: pakai format hari + tanggal + bulan singkat
-
-### [✅ SELESAI] Task 7: Kenaikan Harga per 9 Juni 2026
 - ✅ **Harga baru mulai Selasa 9 Juni 2026:** Tanggung Rp54.000, Besar Rp56.000, Jumbo Rp58.000/tray
-- ✅ PO Selasa 9 Juni: Besar 15 tray, Tanggung 15 tray
+- ✅ PO Selasa 9 Juni: **Besar 25 tray**, Tanggung 15 tray (dikoreksi)
 - ✅ REF: PO-2D561C
-- ✅ Total: Rp1.650.000
+- ✅ Total: (15×54k) + (25×56k) = **Rp2.210.000**
+- ✅ Commit: `7166e7a`
 
 ---
 
