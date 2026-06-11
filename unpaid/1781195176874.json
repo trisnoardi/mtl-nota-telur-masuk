@@ -1,8 +1,8 @@
 {
     "source": "Peternakan UD Mitra Ilahi",
-    "desc": "Selasa, 9 Juni 2026 \u2014 Besar 15 tray, Tanggung 15 tray [harga baru]",
+    "desc": "Selasa, 9 Juni 2026 \u2014 Besar 25 tray, Tanggung 15 tray [harga baru]",
     "q_tt": 15,
-    "q_tb": 15,
+    "q_tb": 25,
     "q_tj": 0,
     "p_tt": 54000,
     "p_tb": 56000,
@@ -11,5 +11,6 @@
     "is_lunas": false,
     "id": 1781195176874,
     "date": "2026-06-09T23:30",
-    "ref": "PO-2D561C"
+    "ref": "PO-2D561C",
+    "needs_image": false
 }
