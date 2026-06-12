@@ -1,15 +1,1 @@
-{
-    "source":  "Peternakan UD Mitra Ilahi",
-    "desc":  "Senin, 8 Juni 2026 — Besar 25 tray, Tanggung 15 tray [harga baru]",
-    "q_tt":  15,
-    "q_tb":  25,
-    "q_tj":  0,
-    "p_tt":  54000,
-    "p_tb":  56000,
-    "p_tj":  58000,
-    "pay_date":  "11 Juni 2026",
-    "is_lunas":  true,
-    "id":  1781195176874,
-    "date":  "2026-06-08T23:30",
-    "ref":  "PO-2D561C"
-}
+{"source":"Peternakan UD Mitra Ilahi","desc":"Senin, 8 Juni 2026 - Besar 25 tray, Tanggung 15 tray [harga baru]","q_tt":15,"q_tb":25,"q_tj":0,"p_tt":54000,"p_tb":56000,"p_tj":58000,"pay_date":"11 Juni 2026","is_lunas":true,"id":1781195176874,"date":"2026-06-08T23:30","ref":"PO-2D561C","needs_image":false}
