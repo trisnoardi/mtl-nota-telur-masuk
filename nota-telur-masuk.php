@@ -629,20 +629,18 @@ $initialPosJson = json_encode($initialPos);
         }
 
         function parsePayDate(str) {
-            // Handle "Kamis, 11 Jun 2026" AND "11 Juni 2026"
             let dateStr = str.includes(', ') ? str.split(', ')[1] : str;
             let parts = dateStr.split(' ');
             return new Date(parseInt(parts[2]), getMonthNum(parts[1]), parseInt(parts[0])).getTime();
         }
 
         function generateReportHTML(reportId = 'temp-report', forUI = false) {
-            // Build mutation events
-            // For paid PO: PO creation (+debt) on date + payment (-debt) on pay_date = 2 events
-            // For unpaid PO: only PO creation (+debt) = 1 event
+            // Step 1: Build all events — each nota (creation) + each payment (grouped by pay_date)
             let events = [];
+
+            // Add nota creation events
             pos.forEach(p => {
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
-                // PO creation — add to debt
                 events.push({
                     date: p.date,
                     sortKey: new Date(p.date).getTime(),
@@ -650,33 +648,45 @@ $initialPosJson = json_encode($initialPos);
                     val: val,
                     type: 'nota'
                 });
-                // If paid — payment event reduces debt
-                if (p.is_lunas && p.pay_date && p.pay_date !== '-') {
-                    events.push({
-                        date: p.pay_date,
-                        sortKey: parsePayDate(p.pay_date),
-                        ref: p.ref,
-                        val: val,
-                        type: 'bayar'
-                    });
-                }
             });
-            
+
+            // Group paid POs by pay_date → each payment date = 1 event
+            let paidGroups = {};
+            pos.filter(p => p.is_lunas && p.pay_date && p.pay_date !== '-').forEach(p => {
+                let key = p.pay_date;
+                if (!paidGroups[key]) paidGroups[key] = { total: 0, refs: [] };
+                let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
+                paidGroups[key].total += val;
+                paidGroups[key].refs.push(p.ref);
+            });
+
+            // Add payment events
+            Object.keys(paidGroups).forEach(payDate => {
+                events.push({
+                    date: payDate,
+                    sortKey: parsePayDate(payDate),
+                    ref: '',
+                    val: paidGroups[payDate].total,
+                    noteCount: paidGroups[payDate].refs.length,
+                    type: 'bayar'
+                });
+            });
+
             // Sort events by date (oldest first)
             events.sort((a, b) => a.sortKey - b.sortKey);
-            
+
             // Take last 15 events
             events = events.slice(-15);
-            
-            // Running balance
+
+            // Step 2: Calculate running balance
             let runningBalance = 0;
-            
-            let containerStyle = forUI 
+
+            let containerStyle = forUI
                 ? `background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); width: 100%; max-width: 600px; font-size: 14px; text-align: left; font-family: 'Inter', sans-serif; border: 1px solid var(--border);`
                 : `margin-top: 25px; padding-top: 20px; border-top: 2px dashed rgba(0,0,0,0.08); font-size: 13px; text-align: left; font-family: 'Inter', sans-serif;`;
 
             let html = `<div id="${reportId}" style="${containerStyle}">`;
-            
+
             if (forUI) {
                 html += `<h3 style="margin-bottom: 15px; font-family: 'Outfit', sans-serif; color: var(--primary); text-align:center;">Mutasi Hutang</h3>`;
             }
@@ -688,41 +698,44 @@ $initialPosJson = json_encode($initialPos);
 
             // Table header
             html += `<div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; padding: 4px 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 4px;">
-                        <span style="flex:1.5">Tanggal</span>
-                        <span style="flex:1.5">Ref / Ket</span>
+                        <span style="flex:2">Tanggal</span>
+                        <span style="flex:2">Keterangan</span>
                         <span style="flex:1; text-align:right">Jumlah</span>
-                        <span style="flex:1; text-align:right">Sisa</span>
+                        <span style="flex:1.5; text-align:right">Sisa Hutang</span>
                      </div>`;
-            
+
             // Mutation rows
             events.forEach(e => {
-                // Bayar events use pay_date string directly; nota events use formatDate
                 let formattedDate = e.type === 'bayar' ? e.date : formatDate(e.date).split(' | ')[0];
-                
+
                 if (e.type === 'bayar') {
                     runningBalance -= e.val;
-                    html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 12px; color: #64748b;">
-                                <span style="flex:1.5"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
-                                <span style="flex:1.5; color:#16a34a; font-weight:600;">Bayar ${e.ref}</span>
-                                <span style="flex:1; text-align:right; color:#16a34a;">-Rp${formatIDR(e.val)}</span>
-                                <span style="flex:1; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(Math.max(0, runningBalance))}</span>
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; font-size: 12px; background: #f0fdf4;">
+                                <span style="flex:2"><span style="color: #166534; font-size: 10px; font-weight:700;">${formattedDate}</span></span>
+                                <span style="flex:2; color:#166534; font-weight:700;">Bayar ${e.noteCount} nota</span>
+                                <span style="flex:1; text-align:right; color:#166534; font-weight:700;">-Rp${formatIDR(e.val)}</span>
+                                <span style="flex:1.5; text-align:right; font-weight:700;color:#166534;">Rp${formatIDR(Math.max(0, runningBalance))}</span>
                              </div>`;
                 } else {
                     runningBalance += e.val;
                     html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 12px;">
-                                <span style="flex:1.5"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
-                                <span style="flex:1.5; font-weight:600;color:#1e293b;">${e.ref}</span>
+                                <span style="flex:2"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
+                                <span style="flex:2; font-weight:600;color:#1e293b;">${e.ref}</span>
                                 <span style="flex:1; text-align:right; color:#e11d48;">+Rp${formatIDR(e.val)}</span>
-                                <span style="flex:1; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(runningBalance)}</span>
+                                <span style="flex:1.5; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(runningBalance)}</span>
                              </div>`;
                 }
             });
-            
+
             // Footer
             html += `<div style="display: flex; justify-content: space-between; padding: 8px 0; margin-top: 8px; border-top: 2px solid #e2e8f0; font-weight: 800; font-size: 14px;">
                         <span>Sisa hutang akhir</span>
                         <span style="color: #e11d48;">Rp ${formatIDR(unpaidTotal)}</span>
                      </div>`;
+
+            html += `</div>`;
+            return html;
+        }
             
             html += `</div>`;
             return html;
