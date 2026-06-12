@@ -736,10 +736,6 @@ $initialPosJson = json_encode($initialPos);
             html += `</div>`;
             return html;
         }
-            
-            html += `</div>`;
-            return html;
-        }
 
         async function copyScreenshot(idx) {
             const card = document.getElementById(`card-${idx}`);
