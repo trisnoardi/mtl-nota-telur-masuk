@@ -386,7 +386,8 @@ $initialPosJson = json_encode($initialPos);
                 ...base,
                 id: Date.now(),
                 date: dateStr,
-                ref: 'PO-' + Math.random().toString(36).substr(2, 6).toUpperCase()
+                ref: 'PO-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+                sort: Date.now()
             };
         };
 
@@ -502,7 +503,7 @@ $initialPosJson = json_encode($initialPos);
             const wrapper = document.getElementById('po-list-wrapper');
             wrapper.innerHTML = '';
 
-            pos.sort((a, b) => new Date(b.date) - new Date(a.date));
+            pos.sort((a, b) => (b.sort || new Date(b.date).getTime()) - (a.sort || new Date(a.date).getTime()));
 
             pos.forEach((po, idx) => {
                 const total = (po.q_tt*po.p_tt) + (po.q_tb*po.p_tb) + (po.q_tj*po.p_tj);
@@ -668,7 +669,7 @@ $initialPosJson = json_encode($initialPos);
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
                 events.push({
                     date: p.date,
-                    sortKey: new Date(p.date).getTime(),
+                    sortKey: p.sort || new Date(p.date).getTime(),
                     ref: p.ref,
                     val: val,
                     type: 'nota',
