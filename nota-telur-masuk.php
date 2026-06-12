@@ -623,12 +623,52 @@ $initialPosJson = json_encode($initialPos);
             updateData();
         }
 
+        function getMonthNum(mon) {
+            const months = {'Jan':0,'Feb':1,'Mar':2,'Apr':3,'Mei':4,'Jun':5,'Jul':6,'Agu':7,'Sep':8,'Okt':9,'Nov':10,'Des':11};
+            return months[mon] || 0;
+        }
+
+        function parsePayDate(str) {
+            // Format: "Kamis, 11 Jun 2026"
+            let parts = str.split(', ')[1].split(' ');
+            return new Date(parseInt(parts[2]), getMonthNum(parts[1]), parseInt(parts[0])).getTime();
+        }
+
         function generateReportHTML(reportId = 'temp-report', forUI = false) {
-            let paidList = pos.filter(p => p.is_lunas).sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3).reverse(); 
-            let unpaidList = pos.filter(p => !p.is_lunas).sort((a,b) => new Date(a.date) - new Date(b.date));
+            // Build mutation events
+            // For paid PO: PO creation (+debt) on date + payment (-debt) on pay_date = 2 events
+            // For unpaid PO: only PO creation (+debt) = 1 event
+            let events = [];
+            pos.forEach(p => {
+                let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
+                // PO creation — add to debt
+                events.push({
+                    date: p.date,
+                    sortKey: new Date(p.date).getTime(),
+                    ref: p.ref,
+                    val: val,
+                    type: 'nota'
+                });
+                // If paid — payment event reduces debt
+                if (p.is_lunas && p.pay_date && p.pay_date !== '-') {
+                    events.push({
+                        date: p.pay_date,
+                        sortKey: parsePayDate(p.pay_date),
+                        ref: p.ref,
+                        val: val,
+                        type: 'bayar'
+                    });
+                }
+            });
             
-            let totalPaidValue = paidList.reduce((sum, p) => sum + (p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj), 0);
-            let totalUnpaidValue = unpaidList.reduce((sum, p) => sum + (p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj), 0);
+            // Sort events by date (oldest first)
+            events.sort((a, b) => a.sortKey - b.sortKey);
+            
+            // Take last 15 events
+            events = events.slice(-15);
+            
+            // Running balance
+            let runningBalance = 0;
             
             let containerStyle = forUI 
                 ? `background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); width: 100%; max-width: 600px; font-size: 14px; text-align: left; font-family: 'Inter', sans-serif; border: 1px solid var(--border);`
@@ -637,45 +677,51 @@ $initialPosJson = json_encode($initialPos);
             let html = `<div id="${reportId}" style="${containerStyle}">`;
             
             if (forUI) {
-                html += `<h3 style="margin-bottom: 15px; font-family: 'Outfit', sans-serif; color: var(--primary); text-align:center;">Laporan Tagihan</h3>`;
+                html += `<h3 style="margin-bottom: 15px; font-family: 'Outfit', sans-serif; color: var(--primary); text-align:center;">Mutasi Hutang</h3>`;
             }
 
-            // --- SECTION: DIBAYAR ---
-            if (paidList.length > 0) {
-                html += `<div style="font-weight: 800; margin-bottom: 8px; color: #166534; font-size: 14px;">✓ ${paidList.length} nota terakhir dibayar — Rp ${formatIDR(totalPaidValue)}</div>`;
-                paidList.forEach(p => {
-                    let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
-                    let payDateStr = p.pay_date && p.pay_date !== '-' ? `<span style="font-size:10px; color:#64748b; margin-left:4px;">(${p.pay_date})</span>` : '';
-                    let formattedDate = formatDate(p.date).split(' | ')[0]; 
-                    html += `<div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 4px;">
-                                <span><span style="color: #64748b; font-size: 11px; margin-right: 8px;">${formattedDate}</span><span style="font-weight: 600;">${p.ref}</span></span>
-                                <span><span style="font-weight: 600;">Rp ${formatIDR(val)}</span>
-                                    <span style="color: #166534; font-weight: 700; background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px;">DIBAYAR</span>${payDateStr}
-                                </span>
-                             </div>`;
-                });
-                html += `<div style="margin: 8px 0 12px 0; border-top: 1px dashed #ddd;"></div>`;
-            }
+            // Summary
+            let unpaidCount = pos.filter(p => !p.is_lunas).length;
+            let unpaidTotal = pos.filter(p => !p.is_lunas).reduce((s, p) => s + (p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj), 0);
+            html += `<div style="font-weight: 800; margin-bottom: 12px; color: #e11d48; font-size: 15px;">Sisa hutang: Rp ${formatIDR(unpaidTotal)} (${unpaidCount} nota belum dibayar)</div>`;
 
-            // --- SECTION: BELUM DIBAYAR (dengan running total) ---
-            html += `<div style="font-weight: 800; margin-bottom: 12px; color: #e11d48; font-size: 15px;">- ${unpaidList.length} nota belum dibayar sejumlah Rp ${formatIDR(totalUnpaidValue)}</div>`;
+            // Table header
+            html += `<div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; padding: 4px 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 4px;">
+                        <span style="flex:1.5">Tanggal</span>
+                        <span style="flex:1.5">Ref / Ket</span>
+                        <span style="flex:1; text-align:right">Jumlah</span>
+                        <span style="flex:1; text-align:right">Sisa</span>
+                     </div>`;
             
-            let runningTotal = 0;
-            unpaidList.forEach((p, i) => {
-                let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
-                runningTotal += val;
-                let notaCount = i + 1;
+            // Mutation rows
+            events.forEach(e => {
+                // Bayar events use pay_date string directly; nota events use formatDate
+                let formattedDate = e.type === 'bayar' ? e.date : formatDate(e.date).split(' | ')[0];
                 
-                let formattedDate = formatDate(p.date).split(' | ')[0]; 
-                html += `<div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 4px;">
-                            <span><span style="color: #64748b; font-size: 11px; margin-right: 8px;">${formattedDate}</span><span style="font-weight: 600;">${p.ref}</span></span>
-                            <span>
-                                <span style="font-weight: 600;">Rp ${formatIDR(val)}</span>
-                                <span style="color: #92400e; font-weight: 700; background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px;">BELUM DIBAYAR</span>
-                                <span style="font-size: 10px; color: #64748b; margin-left: 4px;">(${formatIDR(runningTotal)}, bayar ${notaCount} nota)</span>
-                            </span>
-                         </div>`;
+                if (e.type === 'bayar') {
+                    runningBalance -= e.val;
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 12px; color: #64748b;">
+                                <span style="flex:1.5"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
+                                <span style="flex:1.5; color:#16a34a; font-weight:600;">Bayar ${e.ref}</span>
+                                <span style="flex:1; text-align:right; color:#16a34a;">-Rp${formatIDR(e.val)}</span>
+                                <span style="flex:1; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(Math.max(0, runningBalance))}</span>
+                             </div>`;
+                } else {
+                    runningBalance += e.val;
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 12px;">
+                                <span style="flex:1.5"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
+                                <span style="flex:1.5; font-weight:600;color:#1e293b;">${e.ref}</span>
+                                <span style="flex:1; text-align:right; color:#e11d48;">+Rp${formatIDR(e.val)}</span>
+                                <span style="flex:1; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(runningBalance)}</span>
+                             </div>`;
+                }
             });
+            
+            // Footer
+            html += `<div style="display: flex; justify-content: space-between; padding: 8px 0; margin-top: 8px; border-top: 2px solid #e2e8f0; font-weight: 800; font-size: 14px;">
+                        <span>Sisa hutang akhir</span>
+                        <span style="color: #e11d48;">Rp ${formatIDR(unpaidTotal)}</span>
+                     </div>`;
             
             html += `</div>`;
             return html;
