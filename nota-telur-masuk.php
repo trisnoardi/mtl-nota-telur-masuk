@@ -664,12 +664,20 @@ $initialPosJson = json_encode($initialPos);
             // Step 1: Build all events — each nota (creation) + each payment (grouped by pay_date)
             let events = [];
 
-            // Add nota creation events
+            // Add nota creation events — paid nota sorts by pay_date, unpaid by sort/date
             pos.forEach(p => {
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
+                let sortKey;
+                if (p.is_lunas && p.pay_date && p.pay_date !== '-') {
+                    // Paid: sort by payment date so nota appears before its Bayar entry
+                    sortKey = parsePayDate(p.pay_date) - 1;
+                } else {
+                    // Unpaid: sort by creation date
+                    sortKey = p.sort || new Date(p.date).getTime();
+                }
                 events.push({
                     date: p.date,
-                    sortKey: p.sort || new Date(p.date).getTime(),
+                    sortKey: sortKey,
                     ref: p.ref,
                     val: val,
                     type: 'nota',
@@ -687,7 +695,7 @@ $initialPosJson = json_encode($initialPos);
                 paidGroups[key].refs.push(p.ref);
             });
 
-            // Add payment events
+            // Add payment events — sort by pay_date (same as nota, so appears right after)
             Object.keys(paidGroups).forEach(payDate => {
                 events.push({
                     date: payDate,
