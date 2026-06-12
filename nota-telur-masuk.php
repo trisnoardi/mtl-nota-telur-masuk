@@ -646,7 +646,8 @@ $initialPosJson = json_encode($initialPos);
                     sortKey: new Date(p.date).getTime(),
                     ref: p.ref,
                     val: val,
-                    type: 'nota'
+                    type: 'nota',
+                    is_lunas: p.is_lunas
                 });
             });
 
@@ -718,10 +719,15 @@ $initialPosJson = json_encode($initialPos);
                              </div>`;
                 } else {
                     runningBalance += e.val;
+                    let statusBadge = e.is_lunas
+                        ? `<span style="font-size:9px; color:#166534; background:#dcfce7; padding:1px 5px; border-radius:4px; margin-left:5px; font-weight:700;">✓ LUNAS</span>`
+                        : '';
+                    let rowColor = e.is_lunas ? 'color:#64748b;' : 'color:#e11d48;';
+                    let refStyle = e.is_lunas ? 'color:#94a3b8; text-decoration:line-through;' : 'color:#1e293b;';
                     html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 12px;">
                                 <span style="flex:2"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
-                                <span style="flex:2; font-weight:600;color:#1e293b;">${e.ref}</span>
-                                <span style="flex:1; text-align:right; color:#e11d48;">+Rp${formatIDR(e.val)}</span>
+                                <span style="flex:2; font-weight:600;${refStyle}">${e.ref}${statusBadge}</span>
+                                <span style="flex:1; text-align:right; font-weight:600;${rowColor}">+Rp${formatIDR(e.val)}</span>
                                 <span style="flex:1.5; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(runningBalance)}</span>
                              </div>`;
                 }
