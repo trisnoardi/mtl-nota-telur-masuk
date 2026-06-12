@@ -624,13 +624,14 @@ $initialPosJson = json_encode($initialPos);
         }
 
         function getMonthNum(mon) {
-            const months = {'Jan':0,'Feb':1,'Mar':2,'Apr':3,'Mei':4,'Jun':5,'Jul':6,'Agu':7,'Sep':8,'Okt':9,'Nov':10,'Des':11};
-            return months[mon] || 0;
+            const m = {'Jan':0,'Januari':0,'Feb':1,'Februari':1,'Mar':2,'Maret':2,'Apr':3,'April':3,'Mei':4,'Jun':5,'Juni':5,'Jul':6,'Juli':6,'Agu':7,'Agustus':7,'Sep':8,'September':8,'Okt':9,'Oktober':9,'Nov':10,'November':10,'Des':11,'Desember':11};
+            return m[mon] !== undefined ? m[mon] : 0;
         }
 
         function parsePayDate(str) {
-            // Format: "Kamis, 11 Jun 2026"
-            let parts = str.split(', ')[1].split(' ');
+            // Handle "Kamis, 11 Jun 2026" AND "11 Juni 2026"
+            let dateStr = str.includes(', ') ? str.split(', ')[1] : str;
+            let parts = dateStr.split(' ');
             return new Date(parseInt(parts[2]), getMonthNum(parts[1]), parseInt(parts[0])).getTime();
         }
 
