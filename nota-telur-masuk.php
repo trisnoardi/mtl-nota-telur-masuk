@@ -353,6 +353,14 @@ $initialPosJson = json_encode($initialPos);
     <!-- Dashboard Report -->
     <div id="ui-report-container" style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px;"></div>
 
+    <!-- Copy Report Button -->
+    <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 30px;">
+        <button class="btn btn-primary btn-sm" onclick="copyReportScreenshot()" style="background: #166534;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy Screenshot Mutasi
+        </button>
+    </div>
+
     <!-- Scrollable Gallery -->
     <div class="scroll-wrapper" id="po-list-wrapper">
         <!-- Injected by JS -->
@@ -407,17 +415,34 @@ $initialPosJson = json_encode($initialPos);
         }
 
         async function generateCardCanvas(card) {
-            const reportHTML = generateReportHTML('temp-report', false);
-            card.insertAdjacentHTML('beforeend', reportHTML);
             try {
                 const canvas = await html2canvas(card, { scale: 3, backgroundColor: null });
-                const tempReport = card.querySelector('#temp-report');
-                if (tempReport) tempReport.remove();
                 return canvas;
             } catch (err) {
-                const tempReport = card.querySelector('#temp-report');
-                if (tempReport) tempReport.remove();
                 throw err;
+            }
+        }
+
+        async function generateReportCanvas() {
+            const report = document.getElementById('dashboard-report');
+            if (!report) return null;
+            return await html2canvas(report, { scale: 3, backgroundColor: null });
+        }
+
+        async function copyReportScreenshot() {
+            try {
+                const canvas = await generateReportCanvas();
+                if (!canvas) return Swal.fire('Error', 'Tidak ada data mutasi', 'error');
+                canvas.toBlob(async blob => {
+                    try {
+                        await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+                        Swal.fire({ icon: 'success', title: 'Mutasi disalin!', timer: 1000, showConfirmButton: false, toast: true, position: 'top-end' });
+                    } catch(e) {
+                        Swal.fire('Error', 'Gagal copy ke clipboard', 'error');
+                    }
+                });
+            } catch (err) {
+                Swal.fire('Error', 'Gagal generate gambar mutasi', 'error');
             }
         }
 
