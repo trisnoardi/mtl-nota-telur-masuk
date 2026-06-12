@@ -137,6 +137,11 @@ Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" 
    ```
    git add -A && git commit -m "{type}: {description}" && git push
    ```
+6. 🔴 **WAJIB UTF-8 tanpa BOM** saat tulis file JSON — JANGAN pakai `Set-Content` (PowerShell default encoding corrupt Unicode). Gunakan:
+   ```powershell
+   $utf8 = New-Object System.Text.UTF8Encoding $false
+   [System.IO.File]::WriteAllText($path, $jsonString, $utf8)
+   ```
 
 ## 🔗 Load Skill Saat Dibutuhkan
 - **PO baru/edit**: Load skill `session-manager`
