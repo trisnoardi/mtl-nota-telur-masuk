@@ -669,6 +669,7 @@ $initialPosJson = json_encode($initialPos);
                     ref: '',
                     val: paidGroups[payDate].total,
                     noteCount: paidGroups[payDate].refs.length,
+                    refs: paidGroups[payDate].refs,
                     type: 'bayar'
                 });
             });
@@ -711,9 +712,10 @@ $initialPosJson = json_encode($initialPos);
 
                 if (e.type === 'bayar') {
                     runningBalance -= e.val;
+                    let refList = e.refs.join(', ');
                     html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; font-size: 12px; background: #f0fdf4;">
                                 <span style="flex:2"><span style="color: #166534; font-size: 10px; font-weight:700;">${formattedDate}</span></span>
-                                <span style="flex:2; color:#166534; font-weight:700;">Bayar ${e.noteCount} nota</span>
+                                <span style="flex:2; color:#166534; font-weight:700;">Bayar ${e.noteCount} nota <span style="font-weight:400; font-size:10px; color:#64748b;">(${refList})</span></span>
                                 <span style="flex:1; text-align:right; color:#166534; font-weight:700;">-Rp${formatIDR(e.val)}</span>
                                 <span style="flex:1.5; text-align:right; font-weight:700;color:#166534;">Rp${formatIDR(Math.max(0, runningBalance))}</span>
                              </div>`;
