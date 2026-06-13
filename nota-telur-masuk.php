@@ -672,13 +672,21 @@ $initialPosJson = json_encode($initialPos);
             pos.forEach(p => {
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
                 let sortKey = p.sort || new Date(p.date).getTime();
+                
+                let details = [];
+                if (p.q_tt > 0) details.push(`${p.q_tt}t x ${p.p_tt >= 1000 ? (p.p_tt/1000) + 'rb' : formatIDR(p.p_tt)}`);
+                if (p.q_tb > 0) details.push(`${p.q_tb}b x ${p.p_tb >= 1000 ? (p.p_tb/1000) + 'rb' : formatIDR(p.p_tb)}`);
+                if (p.q_tj > 0) details.push(`${p.q_tj}j x ${p.p_tj >= 1000 ? (p.p_tj/1000) + 'rb' : formatIDR(p.p_tj)}`);
+                let detailsStr = details.join(', ');
+
                 events.push({
                     date: p.date,
                     sortKey: sortKey,
                     ref: p.ref,
                     val: val,
                     type: 'nota',
-                    is_lunas: p.is_lunas
+                    is_lunas: p.is_lunas,
+                    details: detailsStr
                 });
             });
 
@@ -765,7 +773,10 @@ $initialPosJson = json_encode($initialPos);
                     let refStyle = e.is_lunas ? 'color:#94a3b8; text-decoration:line-through;' : 'color:#1e293b;';
                     html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 12px;">
                                 <span style="flex:2"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
-                                <span style="flex:2; font-weight:600;${refStyle}">${e.ref}${statusBadge}</span>
+                                <span style="flex:2; display: flex; flex-direction: column; ${refStyle}">
+                                    <span style="font-weight:600;">${e.ref}${statusBadge}</span>
+                                    ${e.details ? `<span style="font-size:10px; color:#64748b; font-weight:400; margin-top:2px; text-decoration:none; display:inline-block;">${e.details}</span>` : ''}
+                                </span>
                                 <span style="flex:1; text-align:right; font-weight:600;${rowColor}">+Rp${formatIDR(e.val)}</span>
                                 <span style="flex:1.5; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(Math.max(0, e.runningBalance))}</span>
                              </div>`;
