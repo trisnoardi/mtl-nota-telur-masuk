@@ -380,6 +380,7 @@ $initialPosJson = json_encode($initialPos);
                 is_lunas: false
             };
             const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             const dateStr = now.toISOString().slice(0, 16); 
             
             return {
@@ -387,7 +388,7 @@ $initialPosJson = json_encode($initialPos);
                 id: Date.now(),
                 date: dateStr,
                 ref: 'PO-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
-                sort: Date.now()
+                sort: new Date(dateStr).getTime()
             };
         };
 
@@ -591,9 +592,12 @@ $initialPosJson = json_encode($initialPos);
         }
 
         function updateData() {
+            const dateVal = inputs.date.value;
+            const sortVal = dateVal ? new Date(dateVal).getTime() : Date.now();
             const po = {
                 ...pos[activeIdx],
-                date: inputs.date.value,
+                date: dateVal,
+                sort: sortVal,
                 source: inputs.source.value,
                 desc: inputs.desc.value,
                 q_tt: parseInt(inputs.q_tt.value) || 0,
