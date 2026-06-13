@@ -407,6 +407,12 @@ $initialPosJson = json_encode($initialPos);
         };
 
         function formatIDR(val) { return new Intl.NumberFormat('id-ID').format(val); }
+        function formatShortDate(val) {
+            if(!val) return '-';
+            const d = new Date(val);
+            const m = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            return `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
+        }
         function formatDate(val) { 
             if(!val) return '-';
             const d = new Date(val);
@@ -694,14 +700,20 @@ $initialPosJson = json_encode($initialPos);
             let paidGroups = {};
             pos.filter(p => p.is_lunas && p.pay_date && p.pay_date !== '-').forEach(p => {
                 let key = p.pay_date;
-                if (!paidGroups[key]) paidGroups[key] = { total: 0, refs: [] };
+                if (!paidGroups[key]) paidGroups[key] = { total: 0, refs: [], items: [] };
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
                 paidGroups[key].total += val;
                 paidGroups[key].refs.push(p.ref);
+                paidGroups[key].items.push({
+                    date: p.date,
+                    val: val
+                });
             });
 
             // Add payment events — sort by pay_date (same as nota, so appears right after)
             Object.keys(paidGroups).forEach(payDate => {
+                // Sort items chronologically by transaction date
+                paidGroups[payDate].items.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
                 events.push({
                     date: payDate,
                     sortKey: parsePayDate(payDate),
@@ -709,6 +721,7 @@ $initialPosJson = json_encode($initialPos);
                     val: paidGroups[payDate].total,
                     noteCount: paidGroups[payDate].refs.length,
                     refs: paidGroups[payDate].refs,
+                    items: paidGroups[payDate].items,
                     type: 'bayar'
                 });
             });
@@ -758,10 +771,20 @@ $initialPosJson = json_encode($initialPos);
                 let formattedDate = e.type === 'bayar' ? e.date : formatDate(e.date).split(' | ')[0];
 
                 if (e.type === 'bayar') {
-                    let refList = e.refs.join(', ');
-                    html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; font-size: 12px; background: #f0fdf4;">
+                    let itemsHtml = '';
+                    if (e.items && e.items.length > 0) {
+                        itemsHtml = `<ul style="list-style: none; margin-top: 4px; padding-left: 0; font-size: 10px; color: #15803d; font-weight: 400;">`;
+                        e.items.forEach(item => {
+                            itemsHtml += `<li style="margin-top: 1px;">- ${formatShortDate(item.date)} - Rp ${formatIDR(item.val)}</li>`;
+                        });
+                        itemsHtml += `</ul>`;
+                    }
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; font-size: 12px; background: #f0fdf4;">
                                 <span style="flex:2"><span style="color: #166534; font-size: 10px; font-weight:700;">${formattedDate}</span></span>
-                                <span style="flex:2; color:#166534; font-weight:700;">Bayar ${e.noteCount} nota <span style="font-weight:400; font-size:10px; color:#64748b;">(${refList})</span></span>
+                                <span style="flex:2; display: flex; flex-direction: column; color:#166534;">
+                                    <span style="font-weight:700;">Bayar ${e.noteCount} nota</span>
+                                    ${itemsHtml}
+                                </span>
                                 <span style="flex:1; text-align:right; color:#166534; font-weight:700;">-Rp${formatIDR(e.val)}</span>
                                 <span style="flex:1.5; text-align:right; font-weight:700;color:#166534;">Rp${formatIDR(Math.max(0, e.runningBalance))}</span>
                              </div>`;
@@ -770,7 +793,7 @@ $initialPosJson = json_encode($initialPos);
                         ? `<span style="font-size:9px; color:#166534; background:#dcfce7; padding:1px 5px; border-radius:4px; margin-left:5px; font-weight:700;">✓ LUNAS</span>`
                         : '';
                     let rowColor = e.is_lunas ? 'color:#64748b;' : 'color:#e11d48;';
-                    let refStyle = e.is_lunas ? 'color:#94a3b8; text-decoration:line-through;' : 'color:#1e293b;';
+                    let refStyle = e.is_lunas ? 'color:#94a3b8;' : 'color:#1e293b;';
                     html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 12px;">
                                 <span style="flex:2"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
                                 <span style="flex:2; display: flex; flex-direction: column; ${refStyle}">
