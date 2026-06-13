@@ -661,24 +661,17 @@ $initialPosJson = json_encode($initialPos);
         function parsePayDate(str) {
             let dateStr = str.includes(', ') ? str.split(', ')[1] : str;
             let parts = dateStr.split(' ');
-            return new Date(parseInt(parts[2]), getMonthNum(parts[1]), parseInt(parts[0])).getTime();
+            return new Date(parseInt(parts[2]), getMonthNum(parts[1]), parseInt(parts[0]), 23, 59, 59).getTime();
         }
 
         function generateReportHTML(reportId = 'temp-report', forUI = false) {
             // Step 1: Build all events — each nota (creation) + each payment (grouped by pay_date)
             let events = [];
 
-            // Add nota creation events — paid nota sorts by pay_date, unpaid by sort/date
+            // Add nota creation events — always sort by transaction date (sort or date)
             pos.forEach(p => {
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
-                let sortKey;
-                if (p.is_lunas && p.pay_date && p.pay_date !== '-') {
-                    // Paid: sort by payment date so nota appears before its Bayar entry
-                    sortKey = parsePayDate(p.pay_date) - 1;
-                } else {
-                    // Unpaid: sort by creation date
-                    sortKey = p.sort || new Date(p.date).getTime();
-                }
+                let sortKey = p.sort || new Date(p.date).getTime();
                 events.push({
                     date: p.date,
                     sortKey: sortKey,
@@ -715,11 +708,19 @@ $initialPosJson = json_encode($initialPos);
             // Sort events by date (oldest first)
             events.sort((a, b) => a.sortKey - b.sortKey);
 
-            // Take last 15 events
-            events = events.slice(-15);
-
-            // Step 2: Calculate running balance
+            // Step 2: Calculate running balance on the entire sorted array
             let runningBalance = 0;
+            events.forEach(e => {
+                if (e.type === 'bayar') {
+                    runningBalance -= e.val;
+                } else {
+                    runningBalance += e.val;
+                }
+                e.runningBalance = runningBalance;
+            });
+
+            // Take last 15 events for rendering
+            events = events.slice(-15);
 
             let containerStyle = forUI
                 ? `background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); width: 100%; max-width: 600px; font-size: 14px; text-align: left; font-family: 'Inter', sans-serif; border: 1px solid var(--border);`
@@ -749,16 +750,14 @@ $initialPosJson = json_encode($initialPos);
                 let formattedDate = e.type === 'bayar' ? e.date : formatDate(e.date).split(' | ')[0];
 
                 if (e.type === 'bayar') {
-                    runningBalance -= e.val;
                     let refList = e.refs.join(', ');
                     html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; font-size: 12px; background: #f0fdf4;">
                                 <span style="flex:2"><span style="color: #166534; font-size: 10px; font-weight:700;">${formattedDate}</span></span>
                                 <span style="flex:2; color:#166534; font-weight:700;">Bayar ${e.noteCount} nota <span style="font-weight:400; font-size:10px; color:#64748b;">(${refList})</span></span>
                                 <span style="flex:1; text-align:right; color:#166534; font-weight:700;">-Rp${formatIDR(e.val)}</span>
-                                <span style="flex:1.5; text-align:right; font-weight:700;color:#166534;">Rp${formatIDR(Math.max(0, runningBalance))}</span>
+                                <span style="flex:1.5; text-align:right; font-weight:700;color:#166534;">Rp${formatIDR(Math.max(0, e.runningBalance))}</span>
                              </div>`;
                 } else {
-                    runningBalance += e.val;
                     let statusBadge = e.is_lunas
                         ? `<span style="font-size:9px; color:#166534; background:#dcfce7; padding:1px 5px; border-radius:4px; margin-left:5px; font-weight:700;">✓ LUNAS</span>`
                         : '';
@@ -768,7 +767,7 @@ $initialPosJson = json_encode($initialPos);
                                 <span style="flex:2"><span style="color: #94a3b8; font-size: 10px;">${formattedDate}</span></span>
                                 <span style="flex:2; font-weight:600;${refStyle}">${e.ref}${statusBadge}</span>
                                 <span style="flex:1; text-align:right; font-weight:600;${rowColor}">+Rp${formatIDR(e.val)}</span>
-                                <span style="flex:1.5; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(runningBalance)}</span>
+                                <span style="flex:1.5; text-align:right; font-weight:600;color:#1e293b;">Rp${formatIDR(Math.max(0, e.runningBalance))}</span>
                              </div>`;
                 }
             });
