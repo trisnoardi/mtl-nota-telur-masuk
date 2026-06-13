@@ -700,23 +700,33 @@ $initialPosJson = json_encode($initialPos);
             let paidGroups = {};
             pos.filter(p => p.is_lunas && p.pay_date && p.pay_date !== '-').forEach(p => {
                 let key = p.pay_date;
-                if (!paidGroups[key]) paidGroups[key] = { total: 0, refs: [], items: [] };
+                if (!paidGroups[key]) paidGroups[key] = { total: 0, refs: [], items: [], maxPOTimestamp: 0 };
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
                 paidGroups[key].total += val;
                 paidGroups[key].refs.push(p.ref);
+                
+                let poTimestamp = p.sort || new Date(p.date).getTime();
+                if (poTimestamp > paidGroups[key].maxPOTimestamp) {
+                    paidGroups[key].maxPOTimestamp = poTimestamp;
+                }
+
                 paidGroups[key].items.push({
                     date: p.date,
                     val: val
                 });
             });
 
-            // Add payment events — sort by pay_date (same as nota, so appears right after)
+            // Add payment events — sort right after the latest PO in that payment group
             Object.keys(paidGroups).forEach(payDate => {
                 // Sort items chronologically by transaction date
                 paidGroups[payDate].items.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                
+                // Sort immediately after its latest paid PO (maxPOTimestamp + 1 second)
+                let sortKey = paidGroups[payDate].maxPOTimestamp + 1000;
+
                 events.push({
                     date: payDate,
-                    sortKey: parsePayDate(payDate),
+                    sortKey: sortKey,
                     ref: '',
                     val: paidGroups[payDate].total,
                     noteCount: paidGroups[payDate].refs.length,
@@ -740,8 +750,8 @@ $initialPosJson = json_encode($initialPos);
                 e.runningBalance = runningBalance;
             });
 
-            // Take last 15 events for rendering
-            events = events.slice(-15);
+            // Take last 30 events for rendering
+            events = events.slice(-30);
 
             let containerStyle = forUI
                 ? `background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); width: 100%; max-width: 600px; font-size: 14px; text-align: left; font-family: 'Inter', sans-serif; border: 1px solid var(--border);`
