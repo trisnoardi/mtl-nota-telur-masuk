@@ -680,10 +680,10 @@ $initialPosJson = json_encode($initialPos);
                 let sortKey = p.sort || new Date(p.date).getTime();
                 
                 let details = [];
-                if (p.q_tt > 0) details.push(`${p.q_tt}t x ${p.p_tt >= 1000 ? (p.p_tt/1000) + 'rb' : formatIDR(p.p_tt)}`);
-                if (p.q_tb > 0) details.push(`${p.q_tb}b x ${p.p_tb >= 1000 ? (p.p_tb/1000) + 'rb' : formatIDR(p.p_tb)}`);
-                if (p.q_tj > 0) details.push(`${p.q_tj}j x ${p.p_tj >= 1000 ? (p.p_tj/1000) + 'rb' : formatIDR(p.p_tj)}`);
-                let detailsStr = details.join(', ');
+                if (p.q_tt > 0) details.push(`<strong>${p.q_tt}t</strong> x ${p.p_tt >= 1000 ? (p.p_tt/1000) + 'rb' : formatIDR(p.p_tt)}`);
+                if (p.q_tb > 0) details.push(`<strong>${p.q_tb}b</strong> x ${p.p_tb >= 1000 ? (p.p_tb/1000) + 'rb' : formatIDR(p.p_tb)}`);
+                if (p.q_tj > 0) details.push(`<strong>${p.q_tj}j</strong> x ${p.p_tj >= 1000 ? (p.p_tj/1000) + 'rb' : formatIDR(p.p_tj)}`);
+                let detailsStr = details.join(' | ');
 
                 events.push({
                     date: p.date,
