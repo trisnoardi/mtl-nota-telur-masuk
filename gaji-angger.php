@@ -445,7 +445,14 @@ $allPosJson = json_encode($allPos);
             <h1>Slip Gaji &amp; Operasional Driver</h1>
             <p>Perhitungan Gaji Pokok, Biaya Antar, dan Biaya Sortir untuk Angger</p>
         </div>
-        <div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="copyToClipboard()" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;">
+                    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                </svg>
+                Salin Rincian (WA)
+            </button>
             <button onclick="window.print()" class="btn">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
@@ -471,11 +478,11 @@ $allPosJson = json_encode($allPos);
                     <div class="form-group">
                         <label>Mode Hitung Biaya</label>
                         <div class="toggle-container">
-                            <input type="radio" name="calc-mode" id="mode-tray" class="toggle-option" value="tray">
-                            <label for="mode-tray" class="toggle-label">Per Tray</label>
+                            <input type="radio" name="calc-mode" id="mode-tray" class="toggle-option" value="tray" checked>
+                            <label for="mode-tray" class="toggle-label">Per Tray (Default)</label>
                             
-                            <input type="radio" name="calc-mode" id="mode-egg" class="toggle-option" value="egg" checked>
-                            <label for="mode-egg" class="toggle-label">Per Butir (Default)</label>
+                            <input type="radio" name="calc-mode" id="mode-egg" class="toggle-option" value="egg">
+                            <label for="mode-egg" class="toggle-label">Per Butir</label>
                         </div>
                     </div>
                 </div>
@@ -490,11 +497,11 @@ $allPosJson = json_encode($allPos);
                         <input type="number" id="salary-rate" class="form-control" value="40000" min="0" step="1000">
                     </div>
                     <div class="form-group">
-                        <label id="delivery-rate-label" for="delivery-rate">Rate Antar (Rp/Butir)</label>
+                        <label id="delivery-rate-label" for="delivery-rate">Rate Antar (Rp/Tray)</label>
                         <input type="number" id="delivery-rate" class="form-control" value="1000" min="0">
                     </div>
                     <div class="form-group">
-                        <label id="sort-rate-label" for="sort-rate">Rate Sortir (Rp/Butir)</label>
+                        <label id="sort-rate-label" for="sort-rate">Rate Sortir (Rp/Tray)</label>
                         <input type="number" id="sort-rate" class="form-control" value="500" min="0">
                     </div>
                 </div>
@@ -789,6 +796,97 @@ $allPosJson = json_encode($allPos);
         [modeTrayRadio, modeEggRadio].forEach(elem => {
             elem.addEventListener('change', updateReport);
         });
+
+        function copyToClipboard() {
+            const startVal = startDateInput.value;
+            const endVal = endDateInput.value;
+            const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
+            
+            const salaryDays = parseInt(salaryDaysInput.value) || 0;
+            const salaryRate = parseInt(salaryRateInput.value) || 0;
+            const deliveryRate = parseInt(deliveryRateInput.value) || 0;
+            const sortRate = parseInt(sortRateInput.value) || 0;
+            
+            let sumTT = 0;
+            let sumTB = 0;
+            let sumTJ = 0;
+            let sumTrays = 0;
+            
+            const startDate = startVal ? new Date(startVal + 'T00:00:00') : null;
+            const endDate = endVal ? new Date(endVal + 'T23:59:59') : null;
+
+            allPos.forEach(po => {
+                if (!po.date) return;
+                const poDate = new Date(po.date);
+                if (startDate && poDate < startDate) return;
+                if (endDate && poDate > endDate) return;
+                
+                sumTT += po.q_tt;
+                sumTB += po.q_tb;
+                sumTJ += po.q_tj;
+                sumTrays += (po.q_tt + po.q_tb + po.q_tj);
+            });
+            
+            const sumEggs = sumTrays * 30;
+            const basicSalaryTotal = salaryDays * salaryRate;
+            
+            let deliveryTotal = 0;
+            let sortTotal = 0;
+            let detailUnit = '';
+            
+            if (calcMode === 'tray') {
+                deliveryTotal = sumTrays * deliveryRate;
+                sortTotal = sumTrays * sortRate;
+                detailUnit = 'tray';
+            } else {
+                deliveryTotal = sumEggs * deliveryRate;
+                sortTotal = sumEggs * sortRate;
+                detailUnit = 'butir';
+            }
+            
+            const grandTotal = basicSalaryTotal + deliveryTotal + sortTotal;
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const sDate = new Date(startVal);
+            const eDate = new Date(endVal);
+            const periodStr = `${sDate.getDate()} ${months[sDate.getMonth()]} ${sDate.getFullYear()} - ${eDate.getDate()} ${months[eDate.getMonth()]} ${eDate.getFullYear()}`;
+            
+            const textToCopy = `*SLIP UPAH & OPERASIONAL DRIVER - ANGGER*
+Periode: ${periodStr}
+
+*Volume Kerja:*
+- Tanggung (TT): ${sumTT} tray
+- Besar (TB): ${sumTB} tray
+- Jumbo (TJ): ${sumTJ} tray
+- Total Volume: ${sumTrays} tray (${sumEggs.toLocaleString('id-ID')} butir)
+
+*Rincian Upah:*
+1. Gaji Pokok: ${salaryDays} Hari x ${formatIDR(salaryRate)} = ${formatIDR(basicSalaryTotal)}
+2. Biaya Antar: ${calcMode === 'tray' ? sumTrays : sumEggs.toLocaleString('id-ID')} ${detailUnit} x ${formatIDR(deliveryRate)} = ${formatIDR(deliveryTotal)}
+3. Biaya Sortir: ${calcMode === 'tray' ? sumTrays : sumEggs.toLocaleString('id-ID')} ${detailUnit} x ${formatIDR(sortRate)} = ${formatIDR(sortTotal)}
+
+*TOTAL UPAH DITERIMA:* *${formatIDR(grandTotal)}*
+
+_Dicetak otomatis oleh Sistem Mitra Telur Premium pada ${new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}_`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil Disalin!',
+                    text: 'Rincian upah telah disalin ke clipboard, siap ditempel ke WhatsApp.',
+                    confirmButtonColor: '#4f46e5',
+                    timer: 3000
+                });
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Menyalin',
+                    text: 'Silakan salin rincian secara manual.',
+                    confirmButtonColor: '#ef4444'
+                });
+            });
+        }
 
         // Initial trigger
         updateReport();
