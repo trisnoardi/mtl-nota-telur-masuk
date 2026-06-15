@@ -504,6 +504,14 @@ $allPosJson = json_encode($allPos);
                         <label id="sort-rate-label" for="sort-rate">Rate Sortir (Rp/Tray)</label>
                         <input type="number" id="sort-rate" class="form-control" value="500" min="0">
                     </div>
+                    <div class="form-group">
+                        <label for="overtime-count">Kali Lembur</label>
+                        <input type="number" id="overtime-count" class="form-control" value="1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="overtime-rate">Rate Lembur (Rp/Kali)</label>
+                        <input type="number" id="overtime-rate" class="form-control" value="20000" min="0" step="1000">
+                    </div>
                 </div>
             </div>
 
@@ -584,6 +592,15 @@ $allPosJson = json_encode($allPos);
                         </div>
                         <span class="invoice-item-price" id="sort-cost-val">Rp 0</span>
                     </div>
+
+                    <!-- Overtime (Lembur) -->
+                    <div class="invoice-item">
+                        <div class="invoice-item-info">
+                            <span class="invoice-item-title">Lembur</span>
+                            <span class="invoice-item-subtitle" id="overtime-subtitle">1 Kali x Rp 20.000</span>
+                        </div>
+                        <span class="invoice-item-price" id="overtime-val">Rp 20.000</span>
+                    </div>
                 </div>
 
                 <div class="invoice-divider"></div>
@@ -621,6 +638,8 @@ $allPosJson = json_encode($allPos);
         const salaryRateInput = document.getElementById('salary-rate');
         const deliveryRateInput = document.getElementById('delivery-rate');
         const sortRateInput = document.getElementById('sort-rate');
+        const overtimeCountInput = document.getElementById('overtime-count');
+        const overtimeRateInput = document.getElementById('overtime-rate');
         
         const deliveryRateLabel = document.getElementById('delivery-rate-label');
         const sortRateLabel = document.getElementById('sort-rate-label');
@@ -635,6 +654,8 @@ $allPosJson = json_encode($allPos);
         const deliveryCostVal = document.getElementById('delivery-cost-val');
         const sortCostSubtitle = document.getElementById('sort-cost-subtitle');
         const sortCostVal = document.getElementById('sort-cost-val');
+        const overtimeSubtitle = document.getElementById('overtime-subtitle');
+        const overtimeVal = document.getElementById('overtime-val');
         const totalVolText = document.getElementById('total-vol-text');
         const grandTotalVal = document.getElementById('grand-total-val');
 
@@ -775,7 +796,11 @@ $allPosJson = json_encode($allPos);
                 sortCostSubtitle.textContent = `${sumEggs.toLocaleString('id-ID')} butir x ${formatIDR(sortRate)}`;
             }
 
-            const grandTotal = basicSalaryTotal + deliveryTotal + sortTotal;
+            const overtimeCount = parseInt(overtimeCountInput.value) || 0;
+            const overtimeRate = parseInt(overtimeRateInput.value) || 0;
+            const overtimeTotal = overtimeCount * overtimeRate;
+
+            const grandTotal = basicSalaryTotal + deliveryTotal + sortTotal + overtimeTotal;
 
             // Update slip view
             basicSalarySubtitle.textContent = `${salaryDays} Hari x ${formatIDR(salaryRate)}`;
@@ -784,12 +809,15 @@ $allPosJson = json_encode($allPos);
             deliveryCostVal.textContent = formatIDR(deliveryTotal);
             sortCostVal.textContent = formatIDR(sortTotal);
             
+            overtimeSubtitle.textContent = `${overtimeCount} Kali x ${formatIDR(overtimeRate)}`;
+            overtimeVal.textContent = formatIDR(overtimeTotal);
+            
             totalVolText.textContent = `${sumTrays} Tray (${sumEggs.toLocaleString('id-ID')} Butir)`;
             grandTotalVal.textContent = formatIDR(grandTotal);
         }
 
         // Event Listeners
-        [startDateInput, endDateInput, salaryDaysInput, salaryRateInput, deliveryRateInput, sortRateInput].forEach(elem => {
+        [startDateInput, endDateInput, salaryDaysInput, salaryRateInput, deliveryRateInput, sortRateInput, overtimeCountInput, overtimeRateInput].forEach(elem => {
             elem.addEventListener('input', updateReport);
         });
 
@@ -806,6 +834,8 @@ $allPosJson = json_encode($allPos);
             const salaryRate = parseInt(salaryRateInput.value) || 0;
             const deliveryRate = parseInt(deliveryRateInput.value) || 0;
             const sortRate = parseInt(sortRateInput.value) || 0;
+            const overtimeCount = parseInt(overtimeCountInput.value) || 0;
+            const overtimeRate = parseInt(overtimeRateInput.value) || 0;
             
             let sumTT = 0;
             let sumTB = 0;
@@ -829,6 +859,7 @@ $allPosJson = json_encode($allPos);
             
             const sumEggs = sumTrays * 30;
             const basicSalaryTotal = salaryDays * salaryRate;
+            const overtimeTotal = overtimeCount * overtimeRate;
             
             let deliveryTotal = 0;
             let sortTotal = 0;
@@ -844,7 +875,7 @@ $allPosJson = json_encode($allPos);
                 detailUnit = 'butir';
             }
             
-            const grandTotal = basicSalaryTotal + deliveryTotal + sortTotal;
+            const grandTotal = basicSalaryTotal + deliveryTotal + sortTotal + overtimeTotal;
             
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
             const sDate = new Date(startVal);
@@ -864,6 +895,7 @@ Periode: ${periodStr}
 1. Gaji Pokok: ${salaryDays} Hari x ${formatIDR(salaryRate)} = ${formatIDR(basicSalaryTotal)}
 2. Biaya Antar: ${calcMode === 'tray' ? sumTrays : sumEggs.toLocaleString('id-ID')} ${detailUnit} x ${formatIDR(deliveryRate)} = ${formatIDR(deliveryTotal)}
 3. Biaya Sortir: ${calcMode === 'tray' ? sumTrays : sumEggs.toLocaleString('id-ID')} ${detailUnit} x ${formatIDR(sortRate)} = ${formatIDR(sortTotal)}
+4. Lembur: ${overtimeCount} Kali x ${formatIDR(overtimeRate)} = ${formatIDR(overtimeTotal)}
 
 *TOTAL UPAH DITERIMA:* *${formatIDR(grandTotal)}*
 
