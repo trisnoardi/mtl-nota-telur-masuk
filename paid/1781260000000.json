@@ -1,0 +1,17 @@
+{
+    "source":  "Peternakan UD Mitra Ilahi",
+    "desc":  "Minggu, 14 Juni 2026 - Jumbo 5 tray, Besar 16 tray, Tanggung 19 tray",
+    "q_tt":  19,
+    "q_tb":  16,
+    "q_tj":  5,
+    "p_tt":  54000,
+    "p_tb":  56000,
+    "p_tj":  58000,
+    "pay_date":  "17 Juni 2026",
+    "is_lunas":  true,
+    "id":  1781260000000,
+    "date":  "2026-06-14T23:30",
+    "ref":  "PO-K9M2BN",
+    "sort":  1781160000000,
+    "pay_desc":  "Modal dari Kak Indra"
+}

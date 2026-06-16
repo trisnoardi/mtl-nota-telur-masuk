@@ -7,10 +7,11 @@
     "p_tt":  52000,
     "p_tb":  54000,
     "p_tj":  57000,
-    "pay_date":  "-",
-    "is_lunas":  false,
+    "pay_date":  "16 Juni 2026",
+    "is_lunas":  true,
     "id":  1780759800000,
     "date":  "2026-06-06T23:30",
     "ref":  "PO-O4X9KP",
-    "sort":  1781110000000
+    "sort":  1781110000000,
+    "pay_desc":  "Modal dari Kak Indra"
 }

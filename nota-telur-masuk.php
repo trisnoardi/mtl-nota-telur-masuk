@@ -700,10 +700,11 @@ $initialPosJson = json_encode($initialPos);
             let paidGroups = {};
             pos.filter(p => p.is_lunas && p.pay_date && p.pay_date !== '-').forEach(p => {
                 let key = p.pay_date;
-                if (!paidGroups[key]) paidGroups[key] = { total: 0, refs: [], items: [], maxPOTimestamp: 0 };
+                if (!paidGroups[key]) paidGroups[key] = { total: 0, refs: [], items: [], maxPOTimestamp: 0, pay_desc: '' };
                 let val = p.q_tt*p.p_tt + p.q_tb*p.p_tb + p.q_tj*p.p_tj;
                 paidGroups[key].total += val;
                 paidGroups[key].refs.push(p.ref);
+                if (p.pay_desc) paidGroups[key].pay_desc = p.pay_desc;
                 
                 let poTimestamp = p.sort || new Date(p.date).getTime();
                 if (poTimestamp > paidGroups[key].maxPOTimestamp) {
@@ -732,6 +733,7 @@ $initialPosJson = json_encode($initialPos);
                     noteCount: paidGroups[payDate].refs.length,
                     refs: paidGroups[payDate].refs,
                     items: paidGroups[payDate].items,
+                    pay_desc: paidGroups[payDate].pay_desc,
                     type: 'bayar'
                 });
             });
@@ -792,7 +794,7 @@ $initialPosJson = json_encode($initialPos);
                     html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; font-size: 12px; background: #f0fdf4;">
                                 <span style="flex:2"><span style="color: #166534; font-size: 10px; font-weight:700;">${formattedDate}</span></span>
                                 <span style="flex:2; display: flex; flex-direction: column; color:#166534;">
-                                    <span style="font-weight:700;">Bayar ${e.noteCount} nota</span>
+                                    <span style="font-weight:700;">${e.pay_desc || `Bayar ${e.noteCount} nota`}</span>
                                     ${itemsHtml}
                                 </span>
                                 <span style="flex:1; text-align:right; color:#166534; font-weight:700;">-Rp${formatIDR(e.val)}</span>
