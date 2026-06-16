@@ -446,6 +446,13 @@ $allPosJson = json_encode($allPos);
             <p>Perhitungan Gaji Pokok, Biaya Antar, dan Biaya Sortir untuk Angger</p>
         </div>
         <div style="display: flex; gap: 10px;">
+            <button onclick="copyImageToClipboard()" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;">
+                    <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                    <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2.002 3h10a2 2 0 0 1 2 2v8zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .706 0L13.002 11V5a1 1 0 0 0-1-1h-10z"/>
+                </svg>
+                Salin Gambar (WA)
+            </button>
             <button onclick="copyToClipboard()" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 4px;">
                     <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
@@ -915,6 +922,70 @@ _Dicetak otomatis oleh Sistem Mitra Telur Premium pada ${new Date().toLocaleDate
                     icon: 'error',
                     title: 'Gagal Menyalin',
                     text: 'Silakan salin rincian secara manual.',
+                    confirmButtonColor: '#ef4444'
+                });
+            });
+        }
+
+        function copyImageToClipboard() {
+            // Show loading popup
+            Swal.fire({
+                title: 'Sedang Membuat Gambar...',
+                text: 'Mohon tunggu sebentar, slip gaji sedang dirender.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Capture the invoice card element
+            const element = document.querySelector('.invoice-card');
+            
+            // Render to canvas
+            html2canvas(element, {
+                scale: 2, // higher resolution
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal Membuat Gambar',
+                            text: 'Gagal mengonversi kanvas ke blob gambar.',
+                            confirmButtonColor: '#ef4444'
+                        });
+                        return;
+                    }
+
+                    // Copy to clipboard
+                    navigator.clipboard.write([
+                        new ClipboardItem({ 'image/png': blob })
+                    ]).then(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Gambar Berhasil Disalin!',
+                            text: 'Slip gaji dalam bentuk gambar telah disalin ke clipboard. Silakan tempel (paste/Ctrl+V) langsung ke WhatsApp.',
+                            confirmButtonColor: '#4f46e5',
+                            timer: 4000
+                        });
+                    }).catch(err => {
+                        console.error('Clipboard copy failed: ', err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal Menyalin Gambar',
+                            text: 'Browser Anda memblokir akses clipboard untuk menyalin file gambar. Silakan gunakan fitur Cetak atau screenshot manual.',
+                            confirmButtonColor: '#ef4444'
+                        });
+                    });
+                }, 'image/png');
+            }).catch(err => {
+                console.error('Canvas rendering failed: ', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Merender Slip',
+                    text: 'Terjadi kesalahan saat merender slip gaji ke gambar.',
                     confirmButtonColor: '#ef4444'
                 });
             });
